@@ -29,7 +29,8 @@ app.use(
         callback(null, true);
       } else {
         console.warn("⛔ CORS denied for origin:", origin);
-        callback(new Error("Not allowed by CORS"));
+        // Don’t throw → reject cleanly
+        callback(null, false);
       }
     },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -97,7 +98,9 @@ app.post("/api/appointment", async (req, res) => {
     // 📧 Send Email
     console.log("📧 Sending email to:", process.env.EMAIL_USER);
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true, // SSL
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -129,8 +132,8 @@ app.post("/api/appointment", async (req, res) => {
     res.json({ success: true });
 
   } catch (error) {
-    console.error("❌ Error sending appointment:", error.message || error);
-    res.status(500).json({ success: false, message: "Server error" });
+    console.error("❌ Error sending appointment:", error);
+    res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 });
 
@@ -146,7 +149,9 @@ app.post("/api/contact", async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -170,7 +175,7 @@ app.post("/api/contact", async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     console.error("❌ Email sending error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: error.message || "Server error" });
   }
 });
 
