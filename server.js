@@ -13,7 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 const allowedOrigins = [
-  "https://dentalartdelhi.com",
+  //"https://dentalartdelhi.com",
   "http://localhost:5173"];
 
 // For ES module __dirname
@@ -149,7 +149,7 @@ app.post("/api/contact", async (req, res) => {
 
     await transporter.sendMail({
       from: `"Dental Art Contact" <${process.env.EMAIL_USER}>`,
-      to: "drtarakhilnani@gmail.com",
+      to: "drtarakhilnanidentalart@gmail.com",
       subject: "📬 New Contact Form Submission",
       html: `
         <h3>New Contact Message</h3>
