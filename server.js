@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-import axios from "axios";
 import ExcelJS from "exceljs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -13,8 +12,9 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 const allowedOrigins = [
-  //"https://dentalartdelhi.com",
-  "http://localhost:5173"];
+  "https://dentalartdelhi.com", // ✅ Production
+  "http://localhost:5173",      // ✅ Local Dev
+];
 
 // For ES module __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -32,9 +32,15 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+// ✅ Handle preflight requests
+app.options("*", cors());
+
 app.use(bodyParser.json());
 console.log("✅ Middleware initialized");
 
